@@ -15,10 +15,12 @@ class Crawler:
 
     def __init__(
         self,
-        proxies: Dict[str, str] = {},
+        download_delay: int,
+        proxy: str = "",
         pipelines: List[Callable[[Dict[str, Any]], Dict[str, Any]]] = [],
     ) -> None:
-        self._response_factory = RequestAdapter(proxies)
+        self._download_delay = download_delay
+        self._response_factory = RequestAdapter(proxy)
         self._pipelines = pipelines
 
     def spider(
@@ -39,11 +41,11 @@ class Crawler:
         new_spider = Spider(spider_function, url)
         self.spiders.append(new_spider)
 
-    def run(self) -> None:
+    async def run(self) -> Iterator[Dict[str, Any]]:
         pass
 
-    def _run_spider(self, spider: Spider) -> Iterator[Dict[str, Any]]:
-        response = self._response_factory.get(spider.url)
+    async def _run_spider(self, spider: Spider) -> Iterator[Dict[str, Any]]:
+        response = await self._response_factory.get(spider.url)
         processor = ScrapingProcessor(response)
 
         scraping_data: interfaces.Model

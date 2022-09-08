@@ -1,8 +1,8 @@
 """Module reserved for utilities"""
 
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Coroutine, Dict
 from scrapy.selector.unified import Selector
-import requests
+import aiohttp
 from robinwould.exceptions import InvalidResponseException
 from robinwould.interfaces import Field, Model
 
@@ -65,27 +65,37 @@ class RequestAdapter:
     """Adapts the requests library to create responses that can be consumed by the
     spiders"""
 
-    def __init__(self, proxies: Dict[str, str]):
-        self._proxies = proxies
+    def __init__(self, proxy: str):
+        self._proxy = proxy
         self._request_method = self._get_request_method()
 
-    def _get_request_method(self) -> Callable[[str], requests.Response]:
+    def _get_request_method(
+        self,
+    ) -> Callable[
+        [str, aiohttp.ClientSession], Coroutine[Any, Any, aiohttp.ClientResponse]
+    ]:
         request_method_dict = {
             False: self._request_without_proxy,
             True: self._request_with_proxy,
         }
 
-        have_proxy = len(self._proxies) > 0
+        have_proxy = len(self._proxy) > 0
 
         return request_method_dict[have_proxy]
 
-    def _request_without_proxy(self, url: str) -> requests.Response:
-        return requests.get(url)
+    async def _request_without_proxy(
+        self, url: str, session: aiohttp.ClientSession
+    ) -> aiohttp.ClientResponse:
+        async with session.get(url) as response:
+            return response
 
-    def _request_with_proxy(self, url: str) -> requests.Response:
-        return requests.get(url, proxies=self._proxies)
+    async def _request_with_proxy(
+        self, url: str, session: aiohttp.ClientSession
+    ) -> aiohttp.ClientResponse:
+        async with session.get(url, proxy=self._proxy) as response:
+            return response
 
-    def get(self, url: str) -> Selector:
+    async def get(self, url: str) -> Selector:
         """Request URL and returns the response to be processed by the spider
 
         Args:
@@ -94,7 +104,9 @@ class RequestAdapter:
         Returns:
             Selector: The HTTP response
         """
-        received_response = self._request_method(url)
-        content = received_response.text
 
-        return Selector(text=content)
+        async with aiohttp.ClientSession() as session:
+            received_response = await self._request_method(url, session)
+            content = received_response.text
+
+            return Selector(text=content)
