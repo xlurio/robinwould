@@ -4,14 +4,14 @@
 from typing import Any, Callable, Dict, Iterator
 from scrapy.selector.unified import Selector
 from robinwould import interfaces
-from robinwould._utils import ScrapingProcessor, ResponseFactory
+from robinwould._utils import ScrapingProcessor, RequestAdapter
 
 
 class Crawler:
     """Manage the spiders"""
 
     def __init__(self, proxies: Dict[str, str] = {}):
-        self._response_factory = ResponseFactory(proxies)
+        self._response_factory = RequestAdapter(proxies)
 
     def spider(
         self,
@@ -29,7 +29,7 @@ class Crawler:
         """
 
         url = kwargs.get("url")
-        response = self._response_factory.make_response(url)
+        response = self._response_factory.get(url)
         processor = ScrapingProcessor(response)
 
         scraping_data: interfaces.Model

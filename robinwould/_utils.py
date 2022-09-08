@@ -61,8 +61,9 @@ class ScrapingProcessor:
         return field
 
 
-class ResponseFactory:
-    """Allows to make response objects to be consumed by the spider"""
+class RequestAdapter:
+    """Adapts the requests library to create responses that can be consumed by the
+    spiders"""
 
     def __init__(self, proxies: Dict[str, str]):
         self._proxies = proxies
@@ -84,7 +85,7 @@ class ResponseFactory:
     def _request_with_proxy(self, url: str) -> requests.Response:
         return requests.get(url, proxies=self._proxies)
 
-    def make_response(self, url: str) -> Selector:
+    def get(self, url: str) -> Selector:
         """Request URL and returns the response to be processed by the spider
 
         Args:
