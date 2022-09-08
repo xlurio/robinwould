@@ -1,7 +1,5 @@
 """Module where the interfaces are located"""
 import abc
-
-
 from typing import Any
 
 
@@ -36,3 +34,16 @@ class Field(abc.ABC):
     @field_value.setter
     def field_value(self, value: Any) -> None:
         self._value = value
+
+    @abc.abstractmethod
+    def clean(self) -> Any:
+        """Validates the scraped value
+
+        Raises:
+            NotImplementedError: when the method is not implemented
+            InvalidFieldValueException: when the value is invalid
+
+        Returns:
+            Any: the scraped value
+        """
+        raise NotImplementedError()

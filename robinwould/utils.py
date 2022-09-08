@@ -4,7 +4,6 @@ from typing import Any, Dict
 from scrapy.selector.unified import Selector
 from robinwould.exceptions import InvalidResponseException
 from robinwould.interfaces import Field, Model
-from robinwould.validators import validators_dict
 
 
 def check_response(response: Any) -> Selector:
@@ -60,7 +59,5 @@ class ScrapingProcessor:
 
         return field
 
-    def _validate_field_value(self, field_value: Field):
-        field_type = type(field_value)
-        validate = validators_dict[field_type]
-        return validate(field_value)
+    def _validate_field_value(self, field: Field):
+        return field.clean()

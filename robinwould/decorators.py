@@ -4,7 +4,7 @@
 from typing import Any, Callable, Dict, Iterator
 from scrapy.selector.unified import Selector
 from robinwould import interfaces
-from robinwould.utils import ScrapingProcessor, check_response
+from robinwould.utils import ScrapingProcessor
 
 
 def spider(
