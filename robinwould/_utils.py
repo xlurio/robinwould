@@ -1,7 +1,8 @@
 """Module reserved for utilities"""
 
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 from scrapy.selector.unified import Selector
+import requests
 from robinwould.exceptions import InvalidResponseException
 from robinwould.interfaces import Field, Model
 
@@ -46,7 +47,7 @@ class ScrapingProcessor:
         for key in data_dict.keys():
             field = getattr(scraping_data, key)
             scraped_field = self._scrape_field(field)
-            validated_value = self._validate_field_value(scraped_field)
+            validated_value = scraped_field.clean()
 
             result_data[key] = validated_value
 
@@ -59,5 +60,40 @@ class ScrapingProcessor:
 
         return field
 
-    def _validate_field_value(self, field: Field):
-        return field.clean()
+
+class ResponseFactory:
+    """Allows to make response objects to be consumed by the spider"""
+
+    def __init__(self, proxies: Dict[str, str]):
+        self._proxies = proxies
+        self._request_method = self._get_request_method()
+
+    def _get_request_method(self) -> Callable[[str], requests.Response]:
+        request_method_dict = {
+            False: self._request_without_proxy,
+            True: self._request_with_proxy,
+        }
+
+        have_proxy = len(self._proxies) > 0
+
+        return request_method_dict[have_proxy]
+
+    def _request_without_proxy(self, url: str) -> requests.Response:
+        return requests.get(url)
+
+    def _request_with_proxy(self, url: str) -> requests.Response:
+        return requests.get(url, proxies=self._proxies)
+
+    def make_response(self, url: str) -> Selector:
+        """Request URL and returns the response to be processed by the spider
+
+        Args:
+            url (str): URL to be requested
+
+        Returns:
+            Selector: The HTTP response
+        """
+        received_response = self._request_method(url)
+        content = received_response.text
+
+        return Selector(text=content)
