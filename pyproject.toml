@@ -8,8 +8,10 @@ authors = [{name = "Lucas Calegario", email = "lucas.c.calegario@outlook.com"}]
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
-description-file = "README.md"
-dynamic = ["version"]
+dynamic = ["version", "description"]
+dependencies = [
+    "scrapy >= 2.6.0, <2.7.0"
+]
 
 [project.urls]
 Home = "https://github.com/xlurio/robinwould"

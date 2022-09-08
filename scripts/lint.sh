@@ -3,4 +3,4 @@
 ./venv/bin/pip install pylint
 clear
 
-./venv/bin/pylint ./robinwould
+./venv/bin/pylint ./robinwould ./test
