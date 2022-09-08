@@ -1,0 +1,15 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "robinwould"
+authors = [{name = "Lucas Calegario", email = "lucas.c.calegario@outlook.com"}]
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: MIT License"]
+description-file = "README.md"
+dynamic = ["version"]
+
+[project.urls]
+Home = "https://github.com/xlurio/robinwould"
