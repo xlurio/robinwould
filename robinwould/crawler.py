@@ -34,7 +34,10 @@ class Crawler:
         new_spider = Spider(spider_function, url)
         self.spiders.append(new_spider)
 
-    def run_spider(self, spider: Spider) -> Iterator[Dict[str, Any]]:
+    def run(self) -> None:
+        pass
+
+    def _run_spider(self, spider: Spider) -> Iterator[Dict[str, Any]]:
         response = self._response_factory.get(spider.url)
         processor = ScrapingProcessor(response)
 
