@@ -13,8 +13,13 @@ class Crawler:
 
     spiders: List[Spider] = []
 
-    def __init__(self, proxies: Dict[str, str] = {}):
+    def __init__(
+        self,
+        proxies: Dict[str, str] = {},
+        pipelines: List[Callable[[Dict[str, Any]], Dict[str, Any]]] = [],
+    ) -> None:
         self._response_factory = RequestAdapter(proxies)
+        self._pipelines = pipelines
 
     def spider(
         self,
