@@ -1,14 +1,17 @@
 """Module where the decorators are located"""
 # pyright: reportGeneralTypeIssues=false
 
-from typing import Any, Callable, Dict, Iterator
+from typing import Any, Callable, Dict, Iterator, List
 from scrapy.selector.unified import Selector
 from robinwould import interfaces
 from robinwould._utils import ScrapingProcessor, RequestAdapter
+from robinwould.spider import Spider
 
 
 class Crawler:
     """Manage the spiders"""
+
+    spiders: List[Spider] = []
 
     def __init__(self, proxies: Dict[str, str] = {}):
         self._response_factory = RequestAdapter(proxies)
@@ -16,7 +19,7 @@ class Crawler:
     def spider(
         self,
         spider_function: Callable[[Selector], Iterator[interfaces.Model]],
-        **kwargs: Dict[str, Any]
+        url: str,
     ) -> Iterator[Dict[str, Any]]:
         """Decorator for declaring RobinWould spiders
 
@@ -28,12 +31,15 @@ class Crawler:
             Iterator[Dict[str, Any]]: the results of the scraping
         """
 
-        url = kwargs.get("url")
-        response = self._response_factory.get(url)
+        new_spider = Spider(spider_function, url)
+        self.spiders.append(new_spider)
+
+    def run_spider(self, spider: Spider) -> Iterator[Dict[str, Any]]:
+        response = self._response_factory.get(spider.url)
         processor = ScrapingProcessor(response)
 
         scraping_data: interfaces.Model
-        for scraping_data in spider_function:
+        for scraping_data in spider.spider_function():
             processed_result = processor.process(scraping_data)
 
             yield processed_result
