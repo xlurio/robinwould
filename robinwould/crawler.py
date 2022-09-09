@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, Iterator, List
 import logging
 from aiohttp.client_exceptions import ClientConnectionError
 import aiohttp
+from scrapy.selector.unified import Selector
 from robinwould import interfaces
 from robinwould._utils import ScrapingProcessor, RequestAdapter
 from robinwould.spider import Spider
@@ -101,7 +102,7 @@ class Crawler:
 
         scraping_data: interfaces.Model
 
-        for scraping_data in spider.spider_function():
+        for scraping_data in spider.spider_function(response):
             processed_result = processor.process(scraping_data)
 
             self._logger.debug("Data scraped: %s", processed_result)
@@ -113,25 +114,25 @@ class Crawler:
     def spider(
         self,
         url: str,
-    ) -> Callable[[Callable[[], Iterator[interfaces.Model]]], None]:
+    ) -> Callable[[Callable[[Selector], Iterator[interfaces.Model]]], None]:
         """Decorator to declare spiders
 
         Args:
             url (str): the URL to be scraped by the spider
 
         Returns:
-            Callable[[Callable[[], Iterator[interfaces.Model]]], None]: the function for
-            attaching spiders to the crawler object
+            Callable[[Callable[[Selector], Iterator[interfaces.Model]]], None]: the
+            function for attaching spiders to the crawler object
         """
 
         def add_spider(
-            spider_function: Callable[[], Iterator[interfaces.Model]]
+            spider_function: Callable[[Selector], Iterator[interfaces.Model]]
         ) -> None:
             """Attach spiders to the crawler object
 
             Args:
-                spider_function (Callable[[], Iterator[interfaces.Model]]): the wrapped
-                spider
+                spider_function (Callable[[Selector], Iterator[interfaces.Model]]): the
+                wrapped spider
             """
             new_spider = Spider(spider_function, url)
             self.spiders.append(new_spider)

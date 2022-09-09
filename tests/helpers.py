@@ -56,7 +56,7 @@ crawler = Crawler()
 
 
 @crawler.spider(url="https://example.com")  # type: ignore
-def fake_spider() -> Iterator[FakeModel]:
+def fake_spider(response: Selector) -> Iterator[FakeModel]:
     """Spider for tests
 
     Yields:
