@@ -4,7 +4,7 @@ from typing import Any, Callable, Coroutine, Dict
 from scrapy.selector.unified import Selector
 import aiohttp
 from robinwould.exceptions import InvalidResponseException
-from robinwould.interfaces import Field, Model
+from robinwould.interfaces import AbstractRequestAdapter, Field, Model
 
 
 def check_response(response: Any) -> Selector:
@@ -55,13 +55,13 @@ class ScrapingProcessor:
 
     def _scrape_field(self, field: Field) -> Field:
         xpath = field.xpath
-        field_value = self._response.xpath(xpath).get(default="")
+        field_value = self._response.xpath(xpath).get()
         field.field_value = field_value
 
         return field
 
 
-class RequestAdapter:
+class RequestAdapter(AbstractRequestAdapter):
     """Adapts the requests library to create responses that can be consumed by the
     spiders"""
 

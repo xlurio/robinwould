@@ -1,6 +1,6 @@
 #! /bin/bash
 
 ./venv/bin/flit install
-clear
+cls
 
 ./venv/bin/pytest

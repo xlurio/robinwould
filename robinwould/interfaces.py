@@ -2,6 +2,8 @@
 import abc
 from typing import Any, Dict
 
+from scrapy.selector.unified import Selector
+
 
 class Field(abc.ABC):
     """Interface for the RobinWould fields to define the models"""
@@ -61,3 +63,9 @@ class Model(abc.ABC):
             field.xpath = xpath
 
             self.__dict__[key] = field
+
+
+class AbstractRequestAdapter(abc.ABC):
+    @abc.abstractmethod
+    async def get(self, url: str) -> Selector:
+        raise NotImplementedError()

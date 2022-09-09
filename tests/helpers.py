@@ -5,7 +5,7 @@ from scrapy.selector.unified import Selector
 from robinwould.crawler import Crawler
 from robinwould.fields import IntegerField, StringField
 
-from robinwould.interfaces import Model
+from robinwould.interfaces import AbstractRequestAdapter, Model
 
 
 def get_example_page_path() -> str:
@@ -34,6 +34,11 @@ def make_example_response() -> Selector:
         page_content = example_page.read()
 
     return Selector(text=page_content)
+
+
+class FakeRequestAdapter(AbstractRequestAdapter):
+    async def get(self, url: str) -> Selector:
+        return make_example_response()
 
 
 class FakeModel(Model):

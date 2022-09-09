@@ -130,3 +130,6 @@ dmypy.json
 
 # Pylance
 typings/
+
+# Windows
+*.ps1
