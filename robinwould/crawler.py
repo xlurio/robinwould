@@ -3,7 +3,6 @@
 
 import asyncio
 from typing import Any, Callable, Dict, Iterator, List
-from scrapy.selector.unified import Selector
 from robinwould import interfaces
 from robinwould._utils import ScrapingProcessor, RequestAdapter
 from robinwould.spider import Spider
@@ -105,9 +104,9 @@ class Crawler:
     def spider(
         self,
         url: str,
-    ) -> Any:
+    ) -> Callable[[Callable[[], Iterator[interfaces.Model]]], None]:
         def add_spider(
-            spider_function: Callable[[Selector], Iterator[interfaces.Model]]
+            spider_function: Callable[[], Iterator[interfaces.Model]]
         ) -> None:
             new_spider = Spider(spider_function, url)
             self.spiders.append(new_spider)
