@@ -1,5 +1,7 @@
-import pytest
+"""Module containing the tests for the scraping data processor"""
+
 from typing import Any, Callable, Dict
+import pytest
 from robinwould.exceptions import InvalidFieldValueException
 from robinwould.interfaces import Model
 from robinwould._utils import ScrapingProcessor

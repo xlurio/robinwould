@@ -1,5 +1,7 @@
-import pytest
+"""Module containing all the tests against the response validating functions"""
+
 from typing import Any, Callable
+import pytest
 from scrapy.selector.unified import Selector
 from robinwould._utils import check_response
 from robinwould.exceptions import InvalidResponseException
@@ -19,7 +21,7 @@ class TestCheckResponse:
         self._then_should_return_it(result)
 
     def _then_should_return_it(self, result: Selector) -> None:
-        assert isinstance(result, Selector) == True
+        assert isinstance(result, Selector) is True
 
     def test_invalid_response(self) -> None:
         """When a valid response is passed as parameter, then it should return it"""

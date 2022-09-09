@@ -66,6 +66,10 @@ class Model(abc.ABC):
 
 
 class AbstractRequestAdapter(abc.ABC):
+    """Interface for sending HTTP requests"""
+
     @abc.abstractmethod
     async def get(self, url: str, session: aiohttp.ClientSession) -> Selector:
+        """Sends a request to the passed URL and returns the response to be consumed
+        by the spider"""
         raise NotImplementedError()

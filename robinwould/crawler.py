@@ -3,12 +3,12 @@
 
 import asyncio
 from typing import Any, Callable, Dict, Iterator, List
-from robinwould import interfaces
-from robinwould._utils import ScrapingProcessor, RequestAdapter
-from robinwould.spider import Spider
 import logging
 from aiohttp.client_exceptions import ClientConnectionError
 import aiohttp
+from robinwould import interfaces
+from robinwould._utils import ScrapingProcessor, RequestAdapter
+from robinwould.spider import Spider
 
 
 class Crawler:
@@ -30,6 +30,12 @@ class Crawler:
         self._logger = logging.getLogger(__name__)
 
     def run(self) -> List[Dict[str, Any]]:
+        """Run all the spiders attached to the crawler object and returns the scraped
+        data
+
+        Returns:
+            List[Dict[str, Any]]: the scraped data
+        """
         return asyncio.run(self._run_all())
 
     async def _run_all(self) -> List[Dict[str, Any]]:
@@ -108,9 +114,25 @@ class Crawler:
         self,
         url: str,
     ) -> Callable[[Callable[[], Iterator[interfaces.Model]]], None]:
+        """Decorator to declare spiders
+
+        Args:
+            url (str): the URL to be scraped by the spider
+
+        Returns:
+            Callable[[Callable[[], Iterator[interfaces.Model]]], None]: the function for
+            attaching spiders to the crawler object
+        """
+
         def add_spider(
             spider_function: Callable[[], Iterator[interfaces.Model]]
         ) -> None:
+            """Attach spiders to the crawler object
+
+            Args:
+                spider_function (Callable[[], Iterator[interfaces.Model]]): the wrapped
+                spider
+            """
             new_spider = Spider(spider_function, url)
             self.spiders.append(new_spider)
 

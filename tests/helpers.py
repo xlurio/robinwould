@@ -1,12 +1,13 @@
+"""Module containing utilities for tests"""
+
 import os
 from typing import Iterator
 
 from scrapy.selector.unified import Selector
+import aiohttp
 from robinwould.crawler import Crawler
 from robinwould.fields import IntegerField, StringField
 from robinwould.interfaces import AbstractRequestAdapter, Model
-
-import aiohttp
 
 
 def get_example_page_path() -> str:
@@ -31,18 +32,22 @@ def make_example_response() -> Selector:
     example_page_path = get_example_page_path()
     page_content: str = ""
 
-    with open(example_page_path, "r") as example_page:
+    with open(example_page_path, "r", encoding="utf8") as example_page:
         page_content = example_page.read()
 
     return Selector(text=page_content)
 
 
 class FakeRequestAdapter(AbstractRequestAdapter):
+    """Request adapter for tests"""
+
     async def get(self, url: str, session: aiohttp.ClientSession) -> Selector:
         return make_example_response()
 
 
 class FakeModel(Model):
+    """Scraping data model for tests"""
+
     name = StringField()
     age = IntegerField()
 
@@ -52,6 +57,11 @@ crawler = Crawler()
 
 @crawler.spider(url="https://example.com")  # type: ignore
 def fake_spider() -> Iterator[FakeModel]:
+    """Spider for tests
+
+    Yields:
+        Iterator[FakeModel]: the scraping data
+    """
     yield FakeModel(
         name='//main/p[@id="name"]/text()',
         age='//main/p[@id="age"]/text()',

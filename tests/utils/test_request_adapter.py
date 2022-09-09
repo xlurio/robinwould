@@ -1,3 +1,5 @@
+"""Module containing all the tests against the request adapter"""
+
 from robinwould._utils import RequestAdapter
 
 

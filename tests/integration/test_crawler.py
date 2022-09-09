@@ -1,3 +1,5 @@
+"""Module containing all the tests against the crawler"""
+
 from typing import Any, Dict, List
 import pytest
 from tests.helpers import crawler, FakeRequestAdapter
