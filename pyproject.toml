@@ -14,5 +14,10 @@ dependencies = [
     "scrapy >= 2.6.0, <2.7.0"
 ]
 
+[project.optional-dependencies]
+test = [
+    "pytest >=7.1.0, <7.2.0"
+]
+
 [project.urls]
 Home = "https://github.com/xlurio/robinwould"

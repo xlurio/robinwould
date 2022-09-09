@@ -1,10 +1,6 @@
 """Module where the interfaces are located"""
 import abc
-from typing import Any
-
-
-class Model(abc.ABC):
-    """Interface for the RobinWould models that should be yield by the spiders"""
+from typing import Any, Dict
 
 
 class Field(abc.ABC):
@@ -21,6 +17,10 @@ class Field(abc.ABC):
             str: the XPath selector
         """
         return self._xpath
+
+    @xpath.setter
+    def xpath(self, value: str) -> None:
+        self._xpath = value
 
     @property
     def field_value(self) -> Any:
@@ -47,3 +47,17 @@ class Field(abc.ABC):
             Any: the scraped value
         """
         raise NotImplementedError()
+
+
+class Model(abc.ABC):
+    """Interface for the RobinWould models that should be yield by the spiders"""
+
+    def __init__(self, **kwargs: str):
+        xpath: Any
+        self.__dict__: Dict[str, Field] = {}
+
+        for key, xpath in kwargs.items():
+            field: Field = getattr(self, key)
+            field.xpath = xpath
+
+            self.__dict__[key] = field

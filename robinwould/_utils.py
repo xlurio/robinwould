@@ -45,7 +45,7 @@ class ScrapingProcessor:
         result_data: Dict[str, Any] = {}
 
         for key in data_dict.keys():
-            field = getattr(scraping_data, key)
+            field: Field = getattr(scraping_data, key)
             scraped_field = self._scrape_field(field)
             validated_value = scraped_field.clean()
 
@@ -55,7 +55,7 @@ class ScrapingProcessor:
 
     def _scrape_field(self, field: Field) -> Field:
         xpath = field.xpath
-        field_value = self._response.xpath(xpath).get()
+        field_value = self._response.xpath(xpath).get(default="")
         field.field_value = field_value
 
         return field
@@ -67,7 +67,7 @@ class RequestAdapter:
 
     def __init__(self, proxy: str):
         self._proxy = proxy
-        self._request_method = self._get_request_method()
+        self.request_method = self._get_request_method()
 
     def _get_request_method(
         self,
@@ -81,7 +81,7 @@ class RequestAdapter:
 
         have_proxy = len(self._proxy) > 0
 
-        return request_method_dict[have_proxy]
+        return request_method_dict.get(have_proxy, self._request_without_proxy)
 
     async def _request_without_proxy(
         self, url: str, session: aiohttp.ClientSession
@@ -106,7 +106,7 @@ class RequestAdapter:
         """
 
         async with aiohttp.ClientSession() as session:
-            received_response = await self._request_method(url, session)
+            received_response = await self.request_method(url, session)
             content = received_response.text
 
             return Selector(text=content)

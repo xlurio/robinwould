@@ -3,4 +3,4 @@
 ./venv/bin/pip install black
 clear
 
-./venv/bin/black ./robinwould ./test
+./venv/bin/black ./robinwould ./tests

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-./venv/bin/pip install coverage
+./venv/bin/pip install coverage pytest
 ./venv/bin/coverage run --source=./robinwould -m pytest
 clear
 
