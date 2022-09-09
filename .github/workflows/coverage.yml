@@ -17,7 +17,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install flit
-          flit install --deps coverage
+          flit install --extras coverage
       - name: Run tests and collect coverage
         run: pytest --cov robinwould
       - name: Upload coverage to Codecov
