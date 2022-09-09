@@ -32,7 +32,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with PyLint
       run: |
-        pylint --disable=R0903 --disable=W0102 ./robinwould ./tests 
+        pylint --disable=R0903 --disable=W0102 --disable=W0613 ./robinwould ./tests 
     - name: Test with pytest
       run: |
         pytest
