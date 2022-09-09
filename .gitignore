@@ -133,3 +133,6 @@ typings/
 
 # Windows
 *.ps1
+
+# Development
+demo/

@@ -8,6 +8,7 @@ from robinwould import interfaces
 from robinwould._utils import ScrapingProcessor, RequestAdapter
 from robinwould.spider import Spider
 import logging
+from aiohttp.client_exceptions import ClientConnectionError
 
 
 class Crawler:
@@ -24,6 +25,8 @@ class Crawler:
         self._download_delay = download_delay
         self.response_factory: interfaces.AbstractRequestAdapter = RequestAdapter(proxy)
         self._pipelines = pipelines
+
+        logging.basicConfig()
         self._logger = logging.getLogger(__name__)
 
     async def run(self) -> List[Dict[str, Any]]:
@@ -67,10 +70,20 @@ class Crawler:
 
         return received_results
 
-    async def _run_spider(self, spider: Spider) -> List[Dict[str, Any]]:
+    async def _run_spider(self, spider: Spider) -> Iterator[Dict[str, Any]]:
         self._logger.debug("Requesting %s", spider.url)
-        response = await self.response_factory.get(spider.url)
-        self._logger.debug("Response from %s received", spider.url)
+
+        try:
+            response = await self.response_factory.get(spider.url)
+            self._logger.debug("Response from %s received", spider.url)
+
+        except ClientConnectionError as error:
+            self._logger.error(
+                "%s: Not able to connect to %s",
+                error,
+                spider.url,
+            )
+            return
 
         processor = ScrapingProcessor(response)
 
@@ -87,18 +100,10 @@ class Crawler:
     def spider(
         self,
         url: str,
-    ) -> None:
-        """Decorator for declaring RobinWould spiders
-
-        Args:
-            spider_function (Callable[[Selector], Iterator[interfaces.Model]]): the spider
-            function
-            url [str]: the initial URL to scrape
-        """
-
+    ) -> Any:
         def add_spider(
             spider_function: Callable[[Selector], Iterator[interfaces.Model]]
-        ):
+        ) -> None:
             new_spider = Spider(spider_function, url)
             self.spiders.append(new_spider)
 

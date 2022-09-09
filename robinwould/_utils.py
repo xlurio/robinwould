@@ -107,6 +107,6 @@ class RequestAdapter(AbstractRequestAdapter):
 
         async with aiohttp.ClientSession() as session:
             received_response = await self.request_method(url, session)
-            content = received_response.text
+            content = await received_response.text()
 
             return Selector(text=content)
