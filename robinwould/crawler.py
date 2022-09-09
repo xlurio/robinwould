@@ -9,6 +9,7 @@ from robinwould._utils import ScrapingProcessor, RequestAdapter
 from robinwould.spider import Spider
 import logging
 from aiohttp.client_exceptions import ClientConnectionError
+import aiohttp
 
 
 class Crawler:
@@ -30,12 +31,13 @@ class Crawler:
         self._logger = logging.getLogger(__name__)
 
     async def run(self) -> List[Dict[str, Any]]:
-        future_results = [
-            asyncio.create_task(self._get_results(spider)) for spider in self.spiders
-        ]
-        received_results = await asyncio.gather(*future_results)
-
-        return self._extract_results(received_results)
+        async with aiohttp.ClientSession() as session:
+            future_results = [
+                asyncio.create_task(self._get_results(spider, session))
+                for spider in self.spiders
+            ]
+            received_results = await asyncio.gather(*future_results)
+            return self._extract_results(received_results)
 
     def _extract_results(
         self, received_results: List[List[Dict[str, Any]]]
@@ -56,12 +58,12 @@ class Crawler:
         for inner_result in received_results:
             inner_results_list.append(inner_result)
 
-    async def _get_results(self, spider: Spider):
+    async def _get_results(self, spider: Spider, session: aiohttp.ClientSession):
         received_results: List[interfaces.Model] = []
         result: Dict[str, Any]
         i = 0
 
-        async for result in self._run_spider(spider):
+        async for result in self._run_spider(spider, session):
             received_results.append(result)
             i += 1
 
@@ -70,11 +72,13 @@ class Crawler:
 
         return received_results
 
-    async def _run_spider(self, spider: Spider) -> Iterator[Dict[str, Any]]:
+    async def _run_spider(
+        self, spider: Spider, session: aiohttp.ClientSession
+    ) -> Iterator[Dict[str, Any]]:
         self._logger.debug("Requesting %s", spider.url)
 
         try:
-            response = await self.response_factory.get(spider.url)
+            response = await self.response_factory.get(spider.url, session)
             self._logger.debug("Response from %s received", spider.url)
 
         except ClientConnectionError as error:
@@ -93,6 +97,7 @@ class Crawler:
             processed_result = processor.process(scraping_data)
 
             self._logger.debug("Data scraped: %s", processed_result)
+            print(f"Data scraped: {processed_result}")
             yield processed_result
 
         await asyncio.sleep(self._download_delay)

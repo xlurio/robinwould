@@ -1,8 +1,8 @@
 """Module where the interfaces are located"""
 import abc
 from typing import Any, Dict
-
 from scrapy.selector.unified import Selector
+import aiohttp
 
 
 class Field(abc.ABC):
@@ -67,5 +67,5 @@ class Model(abc.ABC):
 
 class AbstractRequestAdapter(abc.ABC):
     @abc.abstractmethod
-    async def get(self, url: str) -> Selector:
+    async def get(self, url: str, session: aiohttp.ClientSession) -> Selector:
         raise NotImplementedError()

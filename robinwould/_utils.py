@@ -86,16 +86,14 @@ class RequestAdapter(AbstractRequestAdapter):
     async def _request_without_proxy(
         self, url: str, session: aiohttp.ClientSession
     ) -> aiohttp.ClientResponse:
-        async with session.get(url) as response:
-            return response
+        return await session.get(url)
 
     async def _request_with_proxy(
         self, url: str, session: aiohttp.ClientSession
     ) -> aiohttp.ClientResponse:
-        async with session.get(url, proxy=self._proxy) as response:
-            return response
+        return await session.get(url, proxy=self._proxy)
 
-    async def get(self, url: str) -> Selector:
+    async def get(self, url: str, session: aiohttp.ClientSession) -> Selector:
         """Request URL and returns the response to be processed by the spider
 
         Args:
@@ -104,9 +102,8 @@ class RequestAdapter(AbstractRequestAdapter):
         Returns:
             Selector: The HTTP response
         """
+        received_response = await self.request_method(url, session)
+        content = await received_response.text()
+        received_response.close()
 
-        async with aiohttp.ClientSession() as session:
-            received_response = await self.request_method(url, session)
-            content = await received_response.text()
-
-            return Selector(text=content)
+        return Selector(text=content)
