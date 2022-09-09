@@ -29,7 +29,10 @@ class Crawler:
         logging.basicConfig()
         self._logger = logging.getLogger(__name__)
 
-    async def run(self) -> List[Dict[str, Any]]:
+    def run(self) -> List[Dict[str, Any]]:
+        return asyncio.run(self._run_all())
+
+    async def _run_all(self) -> List[Dict[str, Any]]:
         async with aiohttp.ClientSession() as session:
             future_results = [
                 asyncio.create_task(self._get_results(spider, session))

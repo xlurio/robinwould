@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any, Dict, List
 import pytest
 from tests.helpers import crawler, FakeRequestAdapter
@@ -16,7 +15,7 @@ class TestCrawler:
 
     def _when_runned(self) -> List[Dict[str, Any]]:
         crawler.response_factory = FakeRequestAdapter()
-        return asyncio.run(crawler.run())
+        return crawler.run()
 
     def _then_should_scrape_data(self, result: List[Dict[str, Any]]) -> None:
         expected_result = [{"name": "Carlos", "age": 32}]
