@@ -4,8 +4,9 @@ from typing import Iterator
 from scrapy.selector.unified import Selector
 from robinwould.crawler import Crawler
 from robinwould.fields import IntegerField, StringField
-
 from robinwould.interfaces import AbstractRequestAdapter, Model
+
+import aiohttp
 
 
 def get_example_page_path() -> str:
@@ -37,7 +38,7 @@ def make_example_response() -> Selector:
 
 
 class FakeRequestAdapter(AbstractRequestAdapter):
-    async def get(self, url: str) -> Selector:
+    async def get(self, url: str, session: aiohttp.ClientSession) -> Selector:
         return make_example_response()
 
 
