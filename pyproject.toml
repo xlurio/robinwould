@@ -21,5 +21,9 @@ test = [
     "trio >=0.21.0, < 0.22.0"
 ]
 
+lint = [
+    "pylint >=2.15.0, <2.16.0"
+]
+
 [project.urls]
 Home = "https://github.com/xlurio/robinwould"
