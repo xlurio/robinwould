@@ -1,4 +1,4 @@
 # robin-would
-Python package for fastening the development of Scrapy spiders.
+Python framework for fast development of scraping tools.
 
 **Work in progress**
