@@ -96,7 +96,7 @@ The `crawler.run()` method returns all the scraped data, so if you want to write
 
 - For learning more about the XPath expressions, you can find it on [Scrapy documentation](https://docs.scrapy.org/en/latest/topics/selectors.html#working-with-xpaths).
 
-I'm so sorry for not being able to delivery all the information you may need, I'll be working on a more complete documentation for future versions.
+I'm so sorry for not being able to deliver all the information you may need, I'll be working on a more complete documentation for future versions.
 
 
 ## Licence
