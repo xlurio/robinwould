@@ -37,4 +37,7 @@ jobs:
       run: flit build
       
     - name: Publish package
+      env:
+          FLIT_USERNAME: ${{ secrets.FLIT_USERNAME }}
+          FLIT_PASSWORD: ${{ secrets.FLIT_PASSWORD }}
       run: bash ./scripts/publish.sh
