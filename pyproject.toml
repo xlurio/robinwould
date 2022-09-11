@@ -8,7 +8,7 @@ authors = [{name = "Lucas Calegario", email = "lucas.c.calegario@outlook.com"}]
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
-dynamic = ["version", "description"]
+dynamic = ["version"]
 dependencies = [
     "aiohttp >= 3.8.0, <3.9.0",
     "scrapy >= 2.6.0, <2.7.0"
