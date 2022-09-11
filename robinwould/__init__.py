@@ -2,6 +2,6 @@
 With less than 10 lines of code you already have script ready to fish for data on the
 web."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .crawler import Crawler
